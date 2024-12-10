@@ -10,25 +10,31 @@ public class Game extends JPanel implements KeyListener {
     private Scoreboard scoreboard;
     private ThreadManager threadManager;
     private boolean isGameRunning;
-    private Runnable onGameOver;
+    private boolean isGameOverDialogShown;
+    private final Runnable mainMenuHandler;
 
-    public Game(Runnable onGameOver) {
-        this.player = new Player(50, 300);
-        this.obstacle = new Obstacle(600, 300, 50, 50);
-        this.scoreboard = new Scoreboard();
-        this.threadManager = new ThreadManager(this);
-        this.isGameRunning = false;
-        this.onGameOver = onGameOver;
-
+    public Game(Runnable mainMenuHandler) {
+        this.mainMenuHandler = mainMenuHandler;
         setPreferredSize(new Dimension(800, 600));
         setBackground(Color.BLACK);
         addKeyListener(this);
         setFocusable(true);
+        initGameComponents();
+    }
+
+    private void initGameComponents() {
+        this.player = new Player(50, 300);
+        this.obstacle = new Obstacle(600, 300, 50, 50);
+        this.scoreboard = new Scoreboard();
+        this.threadManager = new ThreadManager(this); // Perbaikan: Kirim `this` ke konstruktor
+        this.isGameRunning = false;
+        this.isGameOverDialogShown = false;
     }
 
     public void startGame() {
         isGameRunning = true;
-        threadManager.startGameLoop();
+        isGameOverDialogShown = false;
+        threadManager.startGameLoop(); // Perbaikan: Tidak ada argumen
     }
 
     public void pauseGame() {
@@ -37,19 +43,37 @@ public class Game extends JPanel implements KeyListener {
     }
 
     public void endGame() {
+        if (isGameOverDialogShown) return; // Prevent multiple dialogs
         isGameRunning = false;
+        isGameOverDialogShown = true;
         threadManager.stopGameLoop();
-        JOptionPane.showMessageDialog(this, "Game Over\nScore: " + scoreboard.getCurrentScore());
-        if (onGameOver != null) {
-            onGameOver.run();
-        }
+
+        SwingUtilities.invokeLater(() -> {
+            int option = JOptionPane.showOptionDialog(
+                this,
+                "Want to try again?\nScore: " + scoreboard.getCurrentScore(),
+                "Game Over",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE,
+                null,
+                new Object[]{"Play Again", "No"},
+                null
+            );
+
+            if (option == JOptionPane.YES_OPTION) {
+                resetGame();
+            } else {
+                mainMenuHandler.run();
+            }
+
+            isGameOverDialogShown = false; // Reset after dialog is closed
+        });
     }
 
     public void resetGame() {
-        player.reset();
-        obstacle.resetPosition();
-        scoreboard.reset();
-        startGame();
+        pauseGame(); // Stop any running game loop
+        initGameComponents(); // Reinitialize game components
+        startGame(); // Restart game loop
     }
 
     @Override
@@ -66,15 +90,17 @@ public class Game extends JPanel implements KeyListener {
     }
 
     public void update() {
-        if (isGameRunning) {
-            player.move();
-            obstacle.move();
-            if (player.checkCollision(obstacle)) {
-                endGame();
-            }
-            scoreboard.updateScore();
-            repaint();
+        if (!isGameRunning) return;
+
+        player.move();
+        obstacle.move();
+
+        if (player.checkCollision(obstacle)) {
+            endGame();
         }
+
+        scoreboard.updateScore();
+        repaint();
     }
 
     @Override
@@ -85,8 +111,8 @@ public class Game extends JPanel implements KeyListener {
         if (e.getKeyCode() == KeyEvent.VK_SPACE && isGameRunning) {
             player.jump();
         }
-        if (e.getKeyCode() == KeyEvent.VK_ENTER && !isGameRunning) {
-            resetGame();
+        if (e.getKeyCode() == KeyEvent.VK_ENTER && !isGameRunning && !isGameOverDialogShown) {
+            startGame();
         }
     }
 

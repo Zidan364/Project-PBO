@@ -16,7 +16,6 @@ public class Main {
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             frame.setVisible(true);
 
-            // Declare the gamePanel as a holder for later initialization
             final Game[] gamePanel = new Game[1];
 
             mainMenu.addMouseListener(new MouseAdapter() {
@@ -26,7 +25,7 @@ public class Main {
                         // Remove main menu and initialize the game
                         frame.remove(mainMenu);
                         gamePanel[0] = new Game(() -> {
-                            // Back to main menu after game over
+                            // Back to main menu after "No" is pressed
                             frame.remove(gamePanel[0]);
                             frame.add(mainMenu);
                             frame.revalidate();
