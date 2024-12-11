@@ -3,6 +3,7 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import java.sql.Connection;
@@ -50,17 +51,53 @@ public class Game extends JPanel implements KeyListener {
 
     //new code
     private void saveScoreToDatabase(int score) {
-        try (Connection connection = DatabaseConnector.getConnection()) {
-            String query = "INSERT INTO nilai (name, score) VALUES (?, ?)";
-            PreparedStatement preparedStatement = connection.prepareStatement(query);
-            preparedStatement.setString(1, "Player"); // Replace with a dynamic player name, if needed
-            preparedStatement.setInt(2, score);
-            preparedStatement.executeUpdate();
-            System.out.println("Skor tersimpan di database!");
-        } catch (SQLException e) {
-            System.out.println("Gagal menyimpan skor ke database: " + e.getMessage());
+    try (Connection connection = DatabaseConnector.getConnection()) {
+        // Cek jumlah data di tabel
+        String countQuery = "SELECT COUNT(*) FROM nilai";
+        PreparedStatement countStatement = connection.prepareStatement(countQuery);
+        ResultSet countResult = countStatement.executeQuery();
+        countResult.next();
+        int rowCount = countResult.getInt(1);
+
+        if (rowCount < 3) {
+            // Jika kurang dari 3 data, langsung tambahkan data baru
+            String insertQuery = "INSERT INTO nilai (name, score) VALUES (?, ?)";
+            PreparedStatement insertStatement = connection.prepareStatement(insertQuery);
+            insertStatement.setString(1, "Player"); // Ganti dengan nama pemain dinamis, jika diperlukan
+            insertStatement.setInt(2, score);
+            insertStatement.executeUpdate();
+            System.out.println("Skor baru ditambahkan ke database!");
+        } else {
+            // Jika sudah ada 3 data, periksa apakah skor baru lebih besar dari skor terkecil
+            String minScoreQuery = "SELECT MIN(score) FROM nilai";
+            PreparedStatement minScoreStatement = connection.prepareStatement(minScoreQuery);
+            ResultSet minScoreResult = minScoreStatement.executeQuery();
+            if (minScoreResult.next()) {
+                int minScore = minScoreResult.getInt(1);
+                if (score > minScore) {
+                    // Hapus skor terkecil
+                    String deleteQuery = "DELETE FROM nilai WHERE score = ? LIMIT 1";
+                    PreparedStatement deleteStatement = connection.prepareStatement(deleteQuery);
+                    deleteStatement.setInt(1, minScore);
+                    deleteStatement.executeUpdate();
+
+                    // Tambahkan skor baru
+                    String insertQuery = "INSERT INTO nilai (name, score) VALUES (?, ?)";
+                    PreparedStatement insertStatement = connection.prepareStatement(insertQuery);
+                    insertStatement.setString(1, "Player");
+                    insertStatement.setInt(2, score);
+                    insertStatement.executeUpdate();
+                    System.out.println("Skor lama diganti dengan skor baru di database!");
+                } else {
+                    System.out.println("Skor baru lebih kecil dari skor terkecil di database, tidak ditambahkan.");
+                }
+            }
         }
+    } catch (SQLException e) {
+        System.out.println("Gagal menyimpan skor ke database: " + e.getMessage());
     }
+}
+
 
     public void resetGame() {
         player.reset();
