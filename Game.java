@@ -79,8 +79,8 @@ public class Game extends JPanel implements KeyListener {
     }
 
     private void initGameComponents() {
-        this.player = new Player(50, 300);
-        this.obstacle = new Obstacle(600, 300, 50, 50);
+        this.player = new Player(50, 415);
+        this.obstacle = new Obstacle(600, 415, 50, 50);
         this.scoreboard = new Scoreboard();
         this.threadManager = new ThreadManager(this);
         this.isGameRunning = false;
