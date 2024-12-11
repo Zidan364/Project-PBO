@@ -9,18 +9,13 @@ public class Scoreboard {
     private Connection con;
     private Statement stm;
 
-
     public Scoreboard() {
         this.currentScore = 0;
         this.highScore = 0;
 
-        // database connection
+        // Database connection using DatabaseConnector
         try {
-            String url = "jdbc:mysql://localhost/game";
-            String user = "root";
-            String pass = "";
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            con = DriverManager.getConnection(url, user, pass);
+            con = DatabaseConnector.getConnection();
             stm = con.createStatement();
 
             // Retrieve high score from the database
@@ -30,7 +25,7 @@ public class Scoreboard {
                 highScore = resultSet.getInt(1);
             }
 
-        } catch (ClassNotFoundException | SQLException e) {
+        } catch (SQLException e) {
             e.printStackTrace();
             // Handle database connection errors
         }
@@ -42,16 +37,12 @@ public class Scoreboard {
 
     public void display(Graphics g) {
         g.setColor(Color.WHITE);
-        g.drawString("Score: " + currentScore, 10, 20); 
+        g.drawString("Score: " + currentScore, 10, 20);
         g.drawString("Highscore: " + highScore, 10, 40);
     }
 
     public int getCurrentScore() {
         return currentScore;
-    }
-
-    public void reset() {
-        currentScore = 0;
     }
 
     public void updateHighScore() {
@@ -65,7 +56,7 @@ public class Scoreboard {
                 preparedStatement.setInt(1, highScore); // Set the new high score
                 preparedStatement.setString(2, "player1"); // Specify the player name
                 int rowsAffected = preparedStatement.executeUpdate();
-                
+
                 if (rowsAffected > 0) {
                     System.out.println("Score updated successfully.");
                 } else {
@@ -81,4 +72,10 @@ public class Scoreboard {
     public int getHighScore() {
         return highScore;
     }
+
+    public void reset() {
+        currentScore = 0;
+    }
+
+    
 }

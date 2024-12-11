@@ -15,7 +15,7 @@ public class Game extends JPanel implements KeyListener {
     private ThreadManager threadManager;
     private boolean isGameRunning;
 
-    private Connection connection; // Database connection
+    // private Connection DatabaseConnector; // Database connection
 
     public Game() {
         this.player = new Player(50, 300);
@@ -50,15 +50,10 @@ public class Game extends JPanel implements KeyListener {
 
     //new code
     private void saveScoreToDatabase(int score) {
-        if (connection == null) {
-            System.out.println("Database connection not established!");
-            return;
-        }
-
-        try {
+        try (Connection connection = DatabaseConnector.getConnection()) {
             String query = "INSERT INTO nilai (name, score) VALUES (?, ?)";
             PreparedStatement preparedStatement = connection.prepareStatement(query);
-            preparedStatement.setString(1, "Player"); // Replace with a way to get player name (if desired)
+            preparedStatement.setString(1, "Player"); // Replace with a dynamic player name, if needed
             preparedStatement.setInt(2, score);
             preparedStatement.executeUpdate();
             System.out.println("Skor tersimpan di database!");
