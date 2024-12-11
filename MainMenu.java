@@ -5,7 +5,6 @@ import javax.swing.*;
 public class MainMenu extends JPanel {
 
     private Image backgroundImage;
-    private Image titleImage;
     private Image startButtonImage;
 
     private int startButtonX, startButtonY, startButtonWidth, startButtonHeight;
@@ -14,7 +13,6 @@ public class MainMenu extends JPanel {
         try {
             // Load images
             backgroundImage = new ImageIcon(menuData.get("Background")).getImage();
-            titleImage = new ImageIcon(menuData.get("Judul")).getImage();
             startButtonImage = new ImageIcon(menuData.get("Start")).getImage();
 
             // Precalculate start button dimensions
@@ -38,13 +36,6 @@ public class MainMenu extends JPanel {
         // Draw background
         if (backgroundImage != null) {
             g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), null);
-        }
-
-        // Draw title
-        if (titleImage != null) {
-            int titleX = (getWidth() - titleImage.getWidth(null)) / 2;
-            int titleY = 150;
-            g.drawImage(titleImage, titleX, titleY, null);
         }
 
         // Draw start button
