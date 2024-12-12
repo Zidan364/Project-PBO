@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 11, 2024 at 03:10 PM
+-- Generation Time: Dec 12, 2024 at 09:12 AM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -32,15 +32,16 @@ CREATE TABLE `menu` (
   `Background` varchar(255) NOT NULL,
   `backgroundMain` varchar(255) NOT NULL,
   `Start` varchar(255) NOT NULL,
-  `font` varchar(255) NOT NULL
+  `font` varchar(255) NOT NULL,
+  `BGM` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `menu`
 --
 
-INSERT INTO `menu` (`id_menu`, `Background`, `backgroundMain`, `Start`, `font`) VALUES
-(1, 'Assets\\Menu\\Background.jpg', 'Assets\\Menu\\BackgroundMain.jpg', 'Assets\\Menu\\Start.png', 'Assets\\Daydream.ttf');
+INSERT INTO `menu` (`id_menu`, `Background`, `backgroundMain`, `Start`, `font`, `BGM`) VALUES
+(1, 'Assets\\Menu\\Background.jpg', 'Assets\\Menu\\BackgroundMain.jpg', 'Assets\\Menu\\Start.png', 'Assets\\Daydream.ttf', 'Assets\\BGM.mp3');
 
 -- --------------------------------------------------------
 
@@ -59,15 +60,15 @@ CREATE TABLE `nilai` (
 --
 
 INSERT INTO `nilai` (`id`, `name`, `score`) VALUES
-(3, 'Player', 601),
-(4, 'Player', 551),
-(11, 'Player', 1126),
-(13, 'Player', 955),
 (14, 'Player', 1297),
 (17, 'Player', 1302),
-(18, 'Player', 955),
 (20, 'Player', 1126),
-(21, 'Player', 5401);
+(21, 'Player', 5401),
+(25, 'Player', 1197),
+(27, 'Player', 2050),
+(28, 'Player', 1672),
+(30, 'Player', 1201),
+(31, 'Player', 1633);
 
 --
 -- Indexes for dumped tables
@@ -93,7 +94,7 @@ ALTER TABLE `nilai`
 -- AUTO_INCREMENT for table `nilai`
 --
 ALTER TABLE `nilai`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
