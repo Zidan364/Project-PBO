@@ -5,30 +5,37 @@ public class Player extends GameObject {
     private int velocity;
     private boolean isJumping;
     private int jumpHeight;
+    private int groundLevel;
 
     public Player(int x, int y) {
         this.position = new Point(x, y);
         this.velocity = 0;    // Kecepatan lompatan diinisialisasi ke 0
         this.isJumping = false;
-        this.jumpHeight = 15; // Tinggi lompatan
+        this.jumpHeight = 20; // Tinggi lompatan
+        this.groundLevel = y; // Posisi dasar (tanah)
     }
 
     public void move() {
         if (isJumping) {
-            position.y -= jumpHeight; // Gerakkan pemain ke atas saat melompat
+            position.y -= velocity; // Gerakkan pemain ke atas
             velocity--;
-            if (velocity <= 0) {
-                isJumping = false;
+
+            // Cek jika lompatan selesai (kecepatan negatif dan kembali ke tanah)
+            if (position.y >= groundLevel) {
+                position.y = groundLevel; // Pastikan posisi di tanah
+                isJumping = false; // Set ulang status lompat
+                velocity = 0; // Set ulang kecepatan
             }
         } else {
-            if (position.y < 300) {
-                position.y += 4; // Menurunkan pemain untuk kembali ke posisi dasar
+            // Pastikan pemain tetap di tanah
+            if (position.y < groundLevel) {
+                position.y += 4; // Efek gravitasi saat turun kembali
             }
         }
     }
 
     public void jump() {
-        if (!isJumping) {
+        if (!isJumping && position.y == groundLevel) {
             isJumping = true;
             velocity = jumpHeight; // Set velocity untuk lompatan
         }
@@ -46,7 +53,7 @@ public class Player extends GameObject {
     }
 
     public void reset() {
-        position = new Point(50, 300); // Reset posisi pemain
+        position = new Point(50, groundLevel); // Reset posisi pemain ke tanah
         velocity = 0;  // Reset kecepatan lompatan
         isJumping = false; // Reset status lompatan
     }
