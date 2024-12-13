@@ -20,8 +20,8 @@ public class Game extends JPanel implements KeyListener {
 
     public Game() {
         this.player = new Player(50, 300);
-        this.obstacle = new Obstacle(600, 300, 50, 50);
         this.scoreboard = new Scoreboard();
+        this.obstacle = new Obstacle(600, 300, 50, 50, this.scoreboard);
         this.threadManager = new ThreadManager(this);
         this.isGameRunning = false;
         setPreferredSize(new Dimension(800, 600));
