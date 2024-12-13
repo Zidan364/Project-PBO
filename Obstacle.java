@@ -8,12 +8,16 @@ public class Obstacle extends GameObject {
     private int width, height;
     private int speed; 
     private Image image;
+    private Scoreboard scoreboard; // Referensi ke scoreboard untuk akses skor
+    private int lastScoreCheckpoint; // Checkpoint terakhir untuk peningkatan kecepatan
     
-    public Obstacle(int x, int y, int width, int height) {
+    public Obstacle(int x, int y, int width, int height, Scoreboard scoreboard) {
         this.position = new Point(x, y);
         this.width = width;
         this.height = height;
-        this.speed = 5; // Kecepatan awal rintangan
+        this.speed = 4; // Kecepatan awal rintangan
+        this.scoreboard = scoreboard; // Referensi ke scoreboard
+        this.lastScoreCheckpoint = 0; // Checkpoint awal
 
         try {
             image = ImageIO.read(new File("Assets\\Menu\\obstacle.png")); 
@@ -25,10 +29,20 @@ public class Obstacle extends GameObject {
 
     @Override
     public void move() {
-        position.x -= speed; 
-        if (position.x < -width) {  
+        if (scoreboard.getCurrentScore() >= lastScoreCheckpoint + 1000) {
+            lastScoreCheckpoint += 200;
+            increaseSpeed();
+        }
+
+        position.x -= speed; // Menggerakkan rintangan ke kiri
+
+        if (position.x < -width) { // Jika rintangan keluar layar, reset posisi
             resetPosition();
         }
+    }
+
+    private void increaseSpeed() {
+        speed += 2; // Tingkatkan kecepatan
     }
 
     @Override
@@ -42,9 +56,10 @@ public class Obstacle extends GameObject {
     }
 
     public void resetPosition() {
-        position.x = 800; 
-        position.y = 415; 
-        speed = 4;
+        position.x = 800; // Reset posisi rintangan ke sebelah kanan layar
+        position.y = 410;
+        speed = 4; // Reset kecepatan rintangan
+        lastScoreCheckpoint = 0; // Reset checkpoint saat game di-reset
     }
 
     public Point getPosition() {

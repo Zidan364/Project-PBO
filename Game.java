@@ -80,8 +80,8 @@ public class Game extends JPanel implements KeyListener {
 
     private void initGameComponents() {
         this.player = new Player(50, 415);
-        this.obstacle = new Obstacle(600, 415, 65, 65);
         this.scoreboard = new Scoreboard();
+        this.obstacle = new Obstacle(600, 410, 65, 65, this.scoreboard);
         this.threadManager = new ThreadManager(this);
         this.isGameRunning = false;
         this.isGameOverDialogShown = false;
