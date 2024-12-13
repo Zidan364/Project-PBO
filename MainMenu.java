@@ -10,6 +10,9 @@ public class MainMenu extends JPanel {
     private int startButtonX, startButtonY, startButtonWidth, startButtonHeight;
 
     public MainMenu(Map<String, String> menuData) {
+        AudioPlayer audioPlayer = new AudioPlayer();
+        audioPlayer.playBackgroundMusic("Assets/BGM.wav");
+        
         try {
             // Load images
             backgroundImage = new ImageIcon(menuData.get("Background")).getImage();
