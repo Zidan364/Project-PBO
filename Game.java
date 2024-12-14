@@ -7,12 +7,15 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Random;
 import javax.swing.*;
 
 public class Game extends JPanel implements KeyListener {
 
     private Player player;
     private Obstacle obstacle;
+    private Obstacle obstacle2;
+    private Obstacle obstacle3;
     private Scoreboard scoreboard;
     private ThreadManager threadManager;
     private boolean isGameRunning;
@@ -20,9 +23,16 @@ public class Game extends JPanel implements KeyListener {
     private final Runnable mainMenuHandler;
     private Image backgroundImage; // Gambar latar belakang
     private Font customFont; // Font khusus untuk skor
-
+    private Random random = new Random();
+    private int banyakObstacle;
     public Game(Runnable mainMenuHandler) {
         this.mainMenuHandler = mainMenuHandler;
+        
+        banyakObstacle = random.nextInt(3)+1;
+        if (banyakObstacle == 1){
+            banyakObstacle++;
+        }
+
         setPreferredSize(new Dimension(800, 600));
         setBackground(Color.BLACK);
         addKeyListener(this);
@@ -81,6 +91,8 @@ public class Game extends JPanel implements KeyListener {
     private void initGameComponents() {
         this.player = new Player(50, 415);
         this.obstacle = new Obstacle(600, 415, 65, 65);
+        this.obstacle2 = new Obstacle(600 + 30, 415, 65, 65);
+        this.obstacle3 = new Obstacle(600 + 30 + 30, 415, 65, 65);
         this.scoreboard = new Scoreboard();
         this.threadManager = new ThreadManager(this);
         this.isGameRunning = false;
@@ -146,7 +158,28 @@ public class Game extends JPanel implements KeyListener {
 
         if (isGameRunning) {
             player.draw(g);
-            obstacle.draw(g);
+            
+            if(obstacle.position.x <= -65 ){
+                banyakObstacle = random.nextInt(3)+1;
+                System.out.println(banyakObstacle);
+            }
+
+            switch (banyakObstacle) {
+                case 1:
+                    obstacle.draw(g);
+                    break;
+                case 2:
+                    obstacle.draw(g);
+                    obstacle2.draw(g);
+                    break;
+                case 3:
+                    obstacle.draw(g);
+                    obstacle2.draw(g);
+                    obstacle3.draw(g);
+                    break;
+                default:
+                    break;
+            }
 
             // Gunakan font khusus jika tersedia untuk skor
             if (customFont != null) {
@@ -168,9 +201,25 @@ public class Game extends JPanel implements KeyListener {
         if (!isGameRunning) return;
 
         player.move();
-        obstacle.move();
 
-        if (player.checkCollision(obstacle)) {
+        switch (banyakObstacle) {
+            case 1:
+                obstacle.move();
+                break;
+            case 2:
+                obstacle.move();
+                obstacle2.move();
+                break;
+            case 3:
+                obstacle.move();
+                obstacle2.move();
+                obstacle3.move();
+                break;
+            default:
+                break;
+        }
+
+        if (player.checkCollision(obstacle) || player.checkCollision(obstacle2) || player.checkCollision(obstacle3)) {
             endGame();
         }
 

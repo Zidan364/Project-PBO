@@ -13,6 +13,7 @@ public class Main {
 
             frame.add(mainMenu);
             frame.pack();
+            frame.setLocationRelativeTo(null);
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             frame.setVisible(true);
 

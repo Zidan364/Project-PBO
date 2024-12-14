@@ -63,7 +63,7 @@ public class Player extends GameObject {
 
     public boolean checkCollision(Obstacle obstacle) {
         Rectangle playerRect = new Rectangle(position.x, position.y, 20, 10);
-        Rectangle obstacleRect = new Rectangle(obstacle.getPosition().x, obstacle.getPosition().y, obstacle.getWidth(), obstacle.getHeight());
+        Rectangle obstacleRect = new Rectangle(obstacle.getPosition().x, obstacle.getPosition().y, obstacle.getWidth()-15, obstacle.getHeight()-15);
         return playerRect.intersects(obstacleRect); // Periksa tabrakan
     }
 
